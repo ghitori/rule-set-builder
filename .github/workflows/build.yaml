@@ -1,0 +1,69 @@
+name: Build
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 2 * * *"
+jobs:
+  awavenue-ads-rule:
+    name: "Build Rule-set for AWAvenue-Ads-Rule"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: "Checkout AWAvenue-Ads-Rule"
+        uses: actions/checkout@v4
+        with:
+          repository: 'TG-Twilight/AWAvenue-Ads-Rule'
+          ref: 'build'
+          path: 'AWAvenue-Ads-Rule'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: "Install Requirements"
+        run: pip3 install pyyaml
+      - name: "Creat Output Dir"
+        run: mkdir ./out
+      - name: "Creat mihomo Rule-set Config"
+        run: |
+          python3 mihomo_ipcidr.py AWAvenue_Ads_Rule
+          python3 mihomo_domain.py AWAvenue_Ads_Rule
+      - name: "Download mihomo Binary File"
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'MetaCubeX/mihomo'
+          latest: true
+          fileName: 'mihomo-linux-amd64-v*.gz'
+      - name: "Build mihomo Rule-set Binary"
+        run: |
+          gzip -d mihomo-linux-amd64-v*.gz
+          chmod +x ./mihomo-linux-amd64-v*
+          ./mihomo-linux-amd64-v* convert-ruleset ipcidr yaml ./out/mihomo-ipcidr.yaml ./out/mihomo-ipcidr.mrs
+          ./mihomo-linux-amd64-v* convert-ruleset domain yaml ./out/mihomo-domain.yaml ./out/mihomo-domain.mrs
+      - name: "Creat sing-box Rule-set Config"
+        run: python3 singbox.py AWAvenue_Ads_Rule
+      - name: "Download sing-box Binary File"
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: 'SagerNet/sing-box'
+          latest: true
+          fileName: 'sing-box-*-linux-amd64.tar.gz'
+      - name: "Build sing-box Rule-set Binary"
+        run: |
+          tar xvf sing-box-*-linux-amd64.tar.gz --strip-components 1
+          ./sing-box rule-set compile ./out/singbox.json -o ./out/singbox.srs
+      - name: Release Rule-set
+        run: |
+          set -e -o pipefail
+          mkdir -p release
+          cd ./release
+          git init
+          git config --local user.email "github-action@users.noreply.github.com"
+          git config --local user.name "GitHub Action"
+          git remote add origin https://github-action:${{ secrets.GITHUB_TOKEN }}@github.com/ghitori/rule-set-builder.git
+          git branch -M AWAvenue_Ads_Rule
+          cp -r ../out/* ./
+          wget https://github.com/TG-Twilight/AWAvenue-Ads-Rule/raw/main/LICENSE -O LICENSE
+          git add .
+          git commit -m "Release Rule-set"
+          git push -f origin AWAvenue_Ads_Rule
