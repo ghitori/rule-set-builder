@@ -14,7 +14,7 @@ def get_list(file_path):
 
 def build_rule_set(rule):
     try:
-        rule_set = {"version":1, "rules": [{}]}
+        rule_set = {"version":2, "rules": [{}]}
         ipcidr_files_path = eval(rule).get("ipcidr")
         ipcidr = []
         if ipcidr_files_path:

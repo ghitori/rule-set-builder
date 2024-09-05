@@ -2,7 +2,7 @@ name: Build
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 2 * * 1"
+    - cron: "30 2 * * *"
 jobs:
   awavenue-ads-rule:
     name: "Build Rule-set for AWAvenue-Ads-Rule"
@@ -47,6 +47,7 @@ jobs:
         with:
           repository: 'SagerNet/sing-box'
           latest: true
+          preRelease: true
           fileName: 'sing-box-*-linux-amd64.tar.gz'
       - name: "Build sing-box Rule-set Binary"
         run: |
@@ -67,18 +68,18 @@ jobs:
           git add .
           git commit -m "Release Rule-set"
           git push -f origin AWAvenue_Ads_Rule
-  adblock-plus-rule:
-    name: "Build Rule-set for Adblock-Plus-Rule"
+  adblockfilters:
+    name: "Build Rule-set for adblockfilters"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: "Checkout Adblock-Plus-Rule"
+      - name: "Checkout adblockfilters"
         uses: actions/checkout@v4
         with:
-          repository: 'xinggsf/Adblock-Plus-Rule'
-          ref: 'master'
-          path: 'Adblock-Plus-Rule'
+          repository: '217heidai/adblockfilters'
+          ref: 'main'
+          path: 'adblockfilters'
       - name: "Creat Output Dir"
         run: mkdir ./out
       - name: "Download sing-box Binary File"
@@ -86,12 +87,12 @@ jobs:
         with:
           repository: 'SagerNet/sing-box'
           latest: true
+          preRelease: true
           fileName: 'sing-box-*-linux-amd64.tar.gz'
       - name: "Build sing-box Rule-set Binary"
         run: |
           tar xvf sing-box-*-linux-amd64.tar.gz --strip-components 1
-          ./sing-box rule-set convert ./Adblock-Plus-Rule/rule.txt -o ./out/singbox-rule.srs
-          ./sing-box rule-set convert ./Adblock-Plus-Rule/mv.txt -o ./out/singbox-mv.srs
+          ./sing-box rule-set convert ./adblockfilters/rules/adblockdns.txt -t adguard -o ./out/singbox.srs
       - name: Release Rule-set
         run: |
           set -e -o pipefail
@@ -101,9 +102,8 @@ jobs:
           git config --local user.email "github-action@users.noreply.github.com"
           git config --local user.name "GitHub Action"
           git remote add origin https://github-action:${{ secrets.GITHUB_TOKEN }}@github.com/ghitori/rule-set-builder.git
-          git branch -M Adblock-Plus-Rule
+          git branch -M adblockfilters
           cp -r ../out/* ./
           git add .
           git commit -m "Release Rule-set"
-          git push -f origin Adblock-Plus-Rule
-          
+          git push -f origin adblockfilters
