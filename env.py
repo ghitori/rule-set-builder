@@ -6,3 +6,6 @@ AWAvenue_Ads_Rule = {
     "domain":"./AWAvenue-Ads-Rule/rule/domain.txt",
     "domain_regex":"./AWAvenue-Ads-Rule/rule/domain_regex.txt"
 }
+adblockfilters = {
+    "adblock":"./adblockfilters/rules/adblockdns.txt"
+}
