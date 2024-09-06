@@ -12,13 +12,13 @@ def adblock_convert(lines: list):
         if len(i.replace(" ", "")) != 0 and i[0] != "!" :
             temp = i
             if i[:2] == "||" and i[-1:] == "^":
-                temp = temp[2:-1]
+                temp = "+." + temp[2:-1]
                 rules.append(temp)
     for i in lines:
         if len(i.replace(" ", "")) != 0 and i[0] != "!" :
             temp = i
             if i[:4] == "@@||" and i[-1:] == "^":
-                temp = temp[4:-1]
+                temp = "+." + temp[4:-1]
                 if temp in rules:
                     rules.remove(temp)
     return rules
@@ -64,7 +64,7 @@ def build_rule_set(rule):
             "payload": domain
         }
         with open(f"./out/mihomo-domain.yaml", "w") as f:
-            yaml.dump(rule_set, f)
+            yaml.safe_dump(rule_set, f)
         print(f"Success build rule-set for {rule}")
 
     except:
@@ -77,3 +77,4 @@ if len(args) == 0:
 
 for rule in args:
     build_rule_set(rule)
+    
