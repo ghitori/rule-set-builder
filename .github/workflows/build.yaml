@@ -33,14 +33,13 @@ jobs:
         with:
           repository: 'MetaCubeX/mihomo'
           latest: true
-          fileName: 'mihomo-linux-amd64-v*.gz'
+          fileName: 'mihomo-linux-amd64-v3-v*.gz'
       - name: "Build mihomo Rule-set Binary"
         run: |
-          gzip -d mihomo-linux-amd64-v*.gz
-          mv ./mihomo-linux-amd64-v* ./mihomo
-          chmod +x ./mihomo
-          ./mihomo convert-ruleset ipcidr yaml ./out/mihomo-ipcidr.yaml ./out/mihomo-ipcidr.mrs
-          ./mihomo convert-ruleset domain yaml ./out/mihomo-domain.yaml ./out/mihomo-domain.mrs
+          gzip -d mihomo-linux-amd64-v3-v*.gz
+          chmod +x ./mihomo-linux-amd64-v3-v*
+          ./mihomo-linux-amd64-v3-v* convert-ruleset ipcidr yaml ./out/mihomo-ipcidr.yaml ./out/mihomo-ipcidr.mrs
+          ./mihomo-linux-amd64-v3-v* convert-ruleset domain yaml ./out/mihomo-domain.yaml ./out/mihomo-domain.mrs
       - name: "Creat sing-box Rule-set Config"
         run: python3 singbox.py AWAvenue_Ads_Rule
       - name: "Download sing-box Binary File"
