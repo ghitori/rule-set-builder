@@ -96,12 +96,12 @@ jobs:
         with:
           repository: 'MetaCubeX/mihomo'
           latest: true
-          fileName: 'mihomo-linux-amd64-v*.gz'
+          fileName: 'mihomo-linux-amd64-v3-v*.gz'
       - name: "Build mihomo Rule-set Binary"
         run: |
-          gzip -d mihomo-linux-amd64-v*.gz
-          chmod +x ./mihomo-linux-amd64-v*
-          ./mihomo-linux-amd64-v* convert-ruleset domain yaml ./out/mihomo-domain.yaml ./out/mihomo-domain.mrs
+          gzip -d mihomo-linux-amd64-v3-v*.gz
+          chmod +x ./mihomo-linux-amd64-v3-v*
+          ./mihomo-linux-amd64-v3-v* convert-ruleset domain yaml ./out/mihomo-domain.yaml ./out/mihomo-domain.mrs
       - name: "Download sing-box Binary File"
         uses: robinraju/release-downloader@v1
         with:
